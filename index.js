@@ -29,13 +29,11 @@ module.exports = function(settingsOrCondition, timeoutOrUndefined, intervalOrUnd
 
   var timedOut = false;
   var timeoutId = setTimeout(function() {
-    _log('[timeout occurred]');
     timedOut = true;
   }, settings.timeout);
 
   var waitingForResult = false;
   var intervalId = setInterval(function() {
-    _log('[interval triggered]', 'timedOut:', timedOut, 'waitingForResult:', waitingForResult);
     if (!waitingForResult) {
       waitingForResult = true;
       settings.condition(function(conditionResult) {
@@ -60,7 +58,6 @@ module.exports = function(settingsOrCondition, timeoutOrUndefined, intervalOrUnd
   return deferred.promise;
 
   function finishWaitFor(success, error) {
-    _log('[finishWaitFor]');
     clearTimeout(timeoutId);
     clearInterval(intervalId);
     timeoutId = intervalId = null;

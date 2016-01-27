@@ -1,6 +1,6 @@
 {
   "name": "waitfor-condition",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A simple utility that waits until a custom condition is met or until timeout.",
   "main": "index.js",
   "scripts": {
