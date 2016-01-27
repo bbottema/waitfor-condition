@@ -1,30 +1,26 @@
 {
-  "name": "gulp-waitfor",
-  "version": "0.0.10",
-  "description": "A gulp task that waits until a condition is met or until timeout.",
+  "name": "waitfor-condition",
+  "version": "0.0.1",
+  "description": "A simple utility that waits until a custom condition is met or until timeout.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bbottema/gulp-waitfor.git"
+    "url": "https://github.com/bbottema/waitfor-condition.git"
   },
   "keywords": [
-    "gulp",
     "wait",
     "waitfor",
     "condition",
-    "delay",
-    "gulpplugin"
+    "delay"
   ],
   "author": "Benny Bottema",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bbottema/gulp-waitfor/issues"
+    "url": "https://github.com/bbottema/waitfor-condition/issues"
   },
   "dependencies": {
-    "map-stream": "0.0.6",
-    "gulp-util": "3.0.7"
   }
 }

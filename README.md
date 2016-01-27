@@ -1,7 +1,7 @@
-gulp-waitfor
+waitfor-condition
 =========
 
-A gulp task that waits until a condition is met or until timeout.
+A simple utility that waits until a custom condition is met or until timeout.
 
 ## Example
 
