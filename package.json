@@ -22,5 +22,6 @@
     "url": "https://github.com/bbottema/waitfor-condition/issues"
   },
   "dependencies": {
+    "q": "1.4.1"
   }
 }

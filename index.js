@@ -16,7 +16,7 @@ module.exports = function(settingsOrCondition, timeoutOrUndefined, intervalOrUnd
   settings.interval = settingsOrCondition.interval || intervalOrUndefined || DEFAULT_INTERVAL_MS;
 
   if (typeof settings.condition !== 'function') {
-    throw new Error("argument should be a function or contain a function property 'condition'");
+    throw new Error("waitfor-condition: first argument should be a function or contain a function property 'condition'");
   }
 
   _log = settings.verbose ? _log : function() {};
