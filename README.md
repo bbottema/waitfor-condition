@@ -1,43 +1,44 @@
 waitfor-condition
 =========
 
-A simple utility that waits until a custom condition is met or until timeout.
+A simple utility that resolves a promise when a custom condition is met or until timeout.
 
 ## Example
 
-The following gulp example will start a wiremock server and delay the jasmine tests until wiremock is finished booting.
+The following example will start a wiremock server and continue only when it is started properly.
 
 ```javascript
-var gulp = require('gulp');
-var waitFor = require('gulp-waitfor');
+var waitForCondition = require('waitfor-condition');
 var request = require('request');
+var child_process = require('child_process');
 
-gulp.task('run-e2e', function () {
-    return gulp
-        .exec('java -jar ./lib/wiremock-standalone.jar --your-options')
-        .pipe(waitFor(function (cb) {
+child_process.exec('java -jar ./lib/wiremock-standalone.jar --your-options', 
+    function() {
+        waitForCondition(function (cb) {
             request('http://localhost:1235/service/your-mock-service', function (error, response) {
                 cb(!error && response.statusCode === 200);
             });
-        }))
-        .pipe(... /* run jasmine tests or simply got to the next task */);
-});
+        }).then(function() {
+            // wiremock started, continue...
+        });
+    }
+);
 ```
 
 ## Options
 
-There are two ways to invoke gulp-waitfor:
+There are two ways to invoke waitfor-condition:
 
 **Basic:**
 
 ```javascript
-waitFor(function(cb) { /* cb(condition satisfied boolean)  */}, [timeoutMs], [intervalMs])
+waitForCondition(function(cb) { /* cb(condition satisfied boolean)  */ }, [timeoutMs], [intervalMs])
 ```
 
 **Config object:**
 
 ```javascript
-waitFor({
+waitForCondition({
   before: function() { },
   condition: function(cb) { /* cb(condition satisfied boolean)  */},
   after: function(succes) { },

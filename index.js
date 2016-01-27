@@ -1,7 +1,5 @@
 'use strict';
 
-var map = require('map-stream');
-var gutil = require('gulp-util');
 var _log = console.log;
 
 var DEFAULT_TIMEOUT_MS = 60 * 1000; // 1 minute in milliseconds
@@ -22,63 +20,70 @@ module.exports = function(settingsOrCondition, timeoutOrUndefined, intervalOrUnd
   }
 
   _log = settings.verbose ? _log : function() {};
+  
+  var deferred = require('q').defer();
 
-  return map(function(file, cb) {
-    invokeBefore();
+  invokeBefore(settings);
 
-    _log('gulp-waitfor: started waiting until condition met or timeout (' + settings.timeout + 'ms)');
+  _log('waitfor-condition: started waiting until condition met or timeout (' + settings.timeout + 'ms)');
 
-    var timedOut = false;
-    var timeoutId = setTimeout(function() {
-      _log('[timeout occurred]');
-      timedOut = true;
-    }, settings.timeout);
+  var timedOut = false;
+  var timeoutId = setTimeout(function() {
+    _log('[timeout occurred]');
+    timedOut = true;
+  }, settings.timeout);
 
-    var waitingForResult = false;
-    var intervalId = setInterval(function() {
-      _log('[interval triggered]', 'timedOut:', timedOut, 'waitingForResult:', waitingForResult);
-      if (!waitingForResult) {
-        waitingForResult = true;
-        settings.condition(function(conditionResult) {
-          if (conditionResult) {
-            if (!timedOut) {
-              _log('gulp-waitfor: condition met result was (' + conditionResult + ')');
-              finishWaitFor(true);
-            }
-            else {
-              _log('gulp-waitfor: condition met, but not before timeout (result was ' + conditionResult + ')');
-            }
+  var waitingForResult = false;
+  var intervalId = setInterval(function() {
+    _log('[interval triggered]', 'timedOut:', timedOut, 'waitingForResult:', waitingForResult);
+    if (!waitingForResult) {
+      waitingForResult = true;
+      settings.condition(function(conditionResult) {
+        if (conditionResult) {
+          if (!timedOut) {
+            _log('waitfor-condition: condition met result was (' + conditionResult + ')');
+            finishWaitFor(true);
           }
-          waitingForResult = false;
-        });
-      }
-      else if (timedOut) {
-        _log('gulp-waitfor: timeout after ' + settings.timeout + ' milliseconds');
-        finishWaitFor(false, new gutil.PluginError('gulp-waitfor', 'gulp-waitfor: timeout after ' + settings.timeout + ' milliseconds'));
-      }
-    }, settings.interval);
-
-    function finishWaitFor(success, errorMsg) {
-      _log('[finishWaitFor]');
-      clearTimeout(timeoutId);
-      clearInterval(intervalId);
-      timeoutId = intervalId = null;
-      invokeAfter(success);
-      cb(errorMsg, file);
+          else {
+            _log('waitfor-condition: condition met, but not before timeout (result was ' + conditionResult + ')');
+          }
+        }
+        waitingForResult = false;
+      });
     }
-  });
-
-  function invokeBefore() {
-    if (typeof settings.before === 'function') {
-      _log('gulp-waitfor: invoking before()');
-      settings.before();
+    else if (timedOut) {
+      _log('waitfor-condition: timeout after ' + settings.timeout + ' milliseconds');
+      finishWaitFor(false, new Error('timeout after ' + settings.timeout + ' milliseconds'));
     }
-  }
+  }, settings.interval);
+  
+  return deferred.promise;
 
-  function invokeAfter(success) {
-    if (typeof settings.after === 'function') {
-      _log('gulp-waitfor: invoking after()');
-      settings.after(success);
+  function finishWaitFor(success, error) {
+    _log('[finishWaitFor]');
+    clearTimeout(timeoutId);
+    clearInterval(intervalId);
+    timeoutId = intervalId = null;
+    invokeAfter(settings, success);
+    
+    if (error) {
+      deferred.reject(error);
+    } else {
+      deferred.resolve();
     }
   }
 };
+
+function invokeBefore(settings) {
+  if (typeof settings.before === 'function') {
+    _log('waitfor-condition: invoking before()');
+    settings.before();
+  }
+}
+
+function invokeAfter(settings, success) {
+  if (typeof settings.after === 'function') {
+    _log('waitfor-condition: invoking after()');
+    settings.after(success);
+  }
+}
