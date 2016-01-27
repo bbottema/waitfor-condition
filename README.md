@@ -1,7 +1,7 @@
 waitfor-condition
 =========
 
-A simple utility that resolves a promise when a custom condition is met or until timeout.
+A simple utility that waits until a custom condition is met or until timeout.
 
 ## Example
 
