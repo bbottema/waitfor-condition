@@ -10,19 +10,17 @@ The following example will start a wiremock server and continue only when it is 
 ```javascript
 var waitForCondition = require('waitfor-condition');
 var request = require('request');
-var child_process = require('child_process');
+var spawn = require('child_process').spawn;
 
-child_process.exec('java -jar ./lib/wiremock-standalone.jar --your-options', 
-    function() {
-        waitForCondition(function (cb) {
-            request('http://localhost:1235/service/your-mock-service', function (error, response) {
-                cb(!error && response.statusCode === 200);
-            });
-        }).then(function() {
-            // wiremock started, continue...
-        });
-    }
-);
+spawn('java', ['-jar', './lib/wiremock-1.57-standalone.jar', '--port', '1235', '--root-dir', './nightwatch-tests/wiremock-mappings'], { stdio: 'inherit' });
+waitForCondition(function (cb) {
+    request('http://localhost:1235/service/your-mock-service', function (error, response) {
+        console.log('checking wiremock...');
+        cb(!error && response.statusCode === 200);
+    });
+}).then(function() {
+    // wiremock started, continue...
+});
 ```
 
 ## Options
