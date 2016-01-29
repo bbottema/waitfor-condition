@@ -13,6 +13,7 @@ var request = require('request');
 var spawn = require('child_process').spawn;
 
 spawn('java', ['-all-your-options', 'here'], { stdio: 'inherit' });
+
 waitForCondition(function (cb) {
     request('http://localhost:1235/service/your-mock-service', function (error, response) {
         console.log('checking wiremock...');
