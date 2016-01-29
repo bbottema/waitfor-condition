@@ -12,7 +12,7 @@ var waitForCondition = require('waitfor-condition');
 var request = require('request');
 var spawn = require('child_process').spawn;
 
-spawn('java', ['-jar', './lib/wiremock-1.57-standalone.jar', '--port', '1235', '--root-dir', './nightwatch-tests/wiremock-mappings'], { stdio: 'inherit' });
+spawn('java', ['-all-your-options', 'here'], { stdio: 'inherit' });
 waitForCondition(function (cb) {
     request('http://localhost:1235/service/your-mock-service', function (error, response) {
         console.log('checking wiremock...');
